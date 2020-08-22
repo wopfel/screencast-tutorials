@@ -32,7 +32,7 @@ while ( 1 ) {
         $step_status[ $n ] = $line;
     }
 
-    my $max_lines_for_output = 5;
+    my $max_lines_for_output = 7;
     my $begin_with_step = 0;
 
     if ( $current_step > $max_lines_for_output - 1 ) {
@@ -40,7 +40,12 @@ while ( 1 ) {
         $begin_with_step = $current_step - $current_step % 5;
     }
 
-    for my $n ( $begin_with_step .. $begin_with_step + $max_lines_for_output ) {
+    if ( $begin_with_step + $max_lines_for_output > $step_count ) {
+        $begin_with_step = $step_count - $max_lines_for_output;
+    }
+    
+
+    for my $n ( $begin_with_step .. $begin_with_step + $max_lines_for_output - 1 ) {
         my $line = $step_status[ $n ];
         print "$line\n";
     }
