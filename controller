@@ -3,13 +3,23 @@ use warnings;
 use YAML::Tiny;
 
 
+sub tmux_send($) {
+
+    my $content = shift;
+
+    my @args = ( "tmux", "send-keys", "-t", "0:0.0",
+                 $content,
+               );
+    system( @args );
+
+}
+
+
 sub run_cmd($$$) {
 
     my $nr = shift;
     my $cmd = shift;
     my $explanation = shift;
-
-    my @args;
 
     printf "Step %3d: $cmd\n", $nr;
     print  "          $explanation";
@@ -18,17 +28,11 @@ sub run_cmd($$$) {
     print WIPFILE "1";
     close WIPFILE;
 
-    @args = ( "tmux", "send-keys", "-t", "0:0.0",
-              "$cmd ; touch /tmp/testenv_step-${nr}_done"
-            );
-    system( @args );
+    tmux_send( "$cmd ; touch /tmp/testenv_step-${nr}_done" );
 
     sleep 1;
 
-    @args = ( "tmux", "send-keys", "-t", "0:0.0",
-              "Enter"
-            );
-    system( @args );
+    tmux_send( "Enter" );
 
     while ( ! -e "/tmp/testenv_step-${nr}_done" ) {
     }
