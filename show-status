@@ -1,20 +1,48 @@
 use strict;
 use warnings;
+use YAML::Tiny;
+
+my $step_list = YAML::Tiny->read( '/scripts/travel-status-de-iris_git.yml' )  or  die;
+my $step_count = scalar( @{ $step_list->[0]->{steps} } );
+
+my @step_status;
 
 while ( 1 ) {
 
     print "Status:\n";
 
-    for my $n ( 1 .. 5 ) {
-        if ( -e "/tmp/testenv_step-${n}_done" ) {
-            print "(done)";
-        } elsif ( -e "/tmp/testenv_step-${n}_wip" ) {
-            print "(wip) ";
+    my $current_step = 0;
+
+    for my $n ( 0 .. $step_count ) {
+        my $step_nr = $n + 1;
+
+        my $line = "";
+
+        if ( -e "/tmp/testenv_step-${step_nr}_done" ) {
+            $line = "(done)";
+        } elsif ( -e "/tmp/testenv_step-${step_nr}_wip" ) {
+            $line = "(wip) ";
+            $current_step = $n;
         } else {
-            print "      ";
+            $line = "      ";
         }
-        print "   ";
-        print "Step $n\n";
+        $line .=  "   ";
+        $line .=  "Step $step_nr";
+
+        $step_status[ $n ] = $line;
+    }
+
+    my $max_lines_for_output = 5;
+    my $begin_with_step = 0;
+
+    if ( $current_step > $max_lines_for_output - 1 ) {
+        #$begin_with_step = $current_step - 1;
+        $begin_with_step = $current_step - $current_step % 5;
+    }
+
+    for my $n ( $begin_with_step .. $begin_with_step + $max_lines_for_output ) {
+        my $line = $step_status[ $n ];
+        print "$line\n";
     }
 
     sleep 1;
