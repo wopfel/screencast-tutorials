@@ -1,0 +1,14 @@
+#!/bin/bash
+
+apt update
+apt install -y tmux
+
+tmux new-session -d
+tmux split-window -v
+tmux split-window -h
+tmux resize-pane -t 0:0.1 -D 4
+tmux resize-pane -t 0:0.1 -R 10
+
+tmux send-keys -t 0:0.1 '/bin/perl /scripts/do_travel-status-de-iris ; sleep 5 ; tmux kill-session' Enter
+tmux send-keys -t 0:0.2 '/bin/perl /scripts/show-status' Enter
+tmux a

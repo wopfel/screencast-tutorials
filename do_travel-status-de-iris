@@ -1,0 +1,64 @@
+use strict;
+use warnings;
+
+sub run_cmd($$$) {
+
+    my $nr = shift;
+    my $cmd = shift;
+    my $explanation = shift;
+
+    my @args;
+
+    print "Step $nr: $cmd\n";
+    print "          $explanation";
+
+    open WIPFILE, ">", "/tmp/testenv_step-${nr}_wip";
+    print WIPFILE "1";
+    close WIPFILE;
+
+    @args = ( "tmux", "send-keys", "-t", "0:0.0",
+              "$cmd ; touch /tmp/testenv_step-${nr}_done"
+            );
+    system( @args );
+
+    sleep 1;
+
+    @args = ( "tmux", "send-keys", "-t", "0:0.0",
+              "Enter"
+            );
+    system( @args );
+
+    while ( ! -e "/tmp/testenv_step-${nr}_done" ) {
+    }
+
+    print "\n";
+
+}
+
+#tmux send-keys -t 0:0.1 '/bin/perl /scripts/do_travel-status-de-iris ; sleep 5 ; tmux kill-session' Enter
+
+run_cmd( 1, "apt-get update", "Update apt package cache" );
+run_cmd( 2, "apt-get install -y locales", "Install locales" );
+
+
+# localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+# export LANG=en_US.utf8
+# 
+# export DEBIAN_FRONTEND=noninteractive
+# apt install -y libmodule-build-perl git
+# apt install -y libjson-perl libcache-perl libdatetime-perl libdatetime-format-strptime-perl libwww-perl libclass-accessor-perl liblist-compare-perl libxml-libxml-perl libgeo-distance-perl liblist-utilsby-perl libtext-levenshteinxs-perl libtest-compile-perl libtest-fatal-perl libtest-pod-perl libtext-csv-perl libtest-number-delta-perl
+# 
+# 
+# git clone https://github.com/derf/Travel-Status-DE-IRIS.git
+# cd Travel-Status-DE-IRIS/
+# 
+# export LC_CTYPE="en_US.UTF-8"
+# perl Build.PL
+# yes | ./Build installdeps
+# ./Build
+# ./Build manifest
+# ./Build test
+# ./Build install
+# 
+# db-iris --version
+# db-iris -oq,D 'Dortmund Hbf'
