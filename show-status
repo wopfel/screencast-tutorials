@@ -18,6 +18,7 @@ while ( 1 ) {
 
         if ( -e "/tmp/testenv_step-${step_nr}_done" ) {
             $line = "(done)";
+            $current_step = $n;
         } elsif ( -e "/tmp/testenv_step-${step_nr}_wip" ) {
             $line = "(wip) ";
             $current_step = $n;
