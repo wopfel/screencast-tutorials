@@ -19,6 +19,6 @@ tmux resize-pane -t 0:0.1 -R 10
 
 cp /scripts/travel-status-de-iris_git.yml /tmp/testenv_script.yml
 
-tmux send-keys -t 0:0.1 '/bin/perl /scripts/do_travel-status-de-iris ; sleep 5 ; tmux kill-session' Enter
+tmux send-keys -t 0:0.1 '/bin/perl /scripts/controller ; sleep 5 ; tmux kill-session' Enter
 tmux send-keys -t 0:0.2 '/bin/perl /scripts/show-status' Enter
 tmux a
