@@ -1,5 +1,7 @@
 use strict;
 use warnings;
+use YAML::Tiny;
+
 
 sub run_cmd($$$) {
 
@@ -35,30 +37,17 @@ sub run_cmd($$$) {
 
 }
 
-#tmux send-keys -t 0:0.1 '/bin/perl /scripts/do_travel-status-de-iris ; sleep 5 ; tmux kill-session' Enter
-
-run_cmd( 1, "apt-get update", "Update apt package cache" );
-run_cmd( 2, "apt-get install -y locales", "Install locales" );
 
 
-# localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
-# export LANG=en_US.utf8
-# 
-# export DEBIAN_FRONTEND=noninteractive
-# apt install -y libmodule-build-perl git
-# apt install -y libjson-perl libcache-perl libdatetime-perl libdatetime-format-strptime-perl libwww-perl libclass-accessor-perl liblist-compare-perl libxml-libxml-perl libgeo-distance-perl liblist-utilsby-perl libtext-levenshteinxs-perl libtest-compile-perl libtest-fatal-perl libtest-pod-perl libtext-csv-perl libtest-number-delta-perl
-# 
-# 
-# git clone https://github.com/derf/Travel-Status-DE-IRIS.git
-# cd Travel-Status-DE-IRIS/
-# 
-# export LC_CTYPE="en_US.UTF-8"
-# perl Build.PL
-# yes | ./Build installdeps
-# ./Build
-# ./Build manifest
-# ./Build test
-# ./Build install
-# 
-# db-iris --version
-# db-iris -oq,D 'Dortmund Hbf'
+
+my $step_list = YAML::Tiny->read( '/scripts/travel-status-de-iris_git.yml' )  or  die;
+my $step_count = scalar( @{ $step_list->[0]->{steps} } );
+
+for my $step_nr ( 0 .. $step_count-1 ) {
+
+    my %step = %{ $step_list->[0]->{steps}->[$step_nr] };
+
+    run_cmd( $step_nr + 1, $step{'cmd'}, $step{'desc'} );
+
+}
+
