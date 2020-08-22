@@ -1,0 +1,16 @@
+PS4=">> Line \${LINENO}: "
+
+git clone https://github.com/derf/Travel-Status-DE-IRIS.git
+cd Travel-Status-DE-IRIS/
+
+export LC_CTYPE="en_US.UTF-8"
+perl Build.PL
+yes | ./Build installdeps
+./Build
+./Build manifest
+./Build test
+./Build install
+
+db-iris --version
+db-iris -oq,D 'Dortmund Hbf' 
+

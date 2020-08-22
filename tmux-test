@@ -1,0 +1,11 @@
+#!/bin/bash
+
+apt update
+apt install -y tmux
+
+tmux new-session -d
+tmux split-window -v
+
+tmux send-keys -t 0:0.1 '/bin/bash -x /scripts/travel-status-de-iris_prepare ; sleep 2 ; tmux wait -S prepared' Enter
+tmux send-keys -t 0:0.0 'tmux wait prepared ; /bin/bash -x /scripts/travel-status-de-iris ; sleep 2 ; tmux kill-session' Enter
+tmux a

@@ -1,0 +1,11 @@
+PS4=">> Line \${LINENO}: "
+
+apt-get update
+apt-get install -y locales
+localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+export LANG=en_US.utf8
+
+export DEBIAN_FRONTEND=noninteractive
+apt install -y libmodule-build-perl git
+apt install -y libjson-perl libcache-perl libdatetime-perl libdatetime-format-strptime-perl libwww-perl libclass-accessor-perl liblist-compare-perl libxml-libxml-perl libgeo-distance-perl liblist-utilsby-perl libtext-levenshteinxs-perl libtest-compile-perl libtest-fatal-perl libtest-pod-perl libtext-csv-perl libtest-number-delta-perl
+
