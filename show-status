@@ -30,14 +30,19 @@ while ( 1 ) {
         $step_status[ $n ] = $line;
     }
 
+
+    # Calculating first output line
+
     my $max_lines_for_output = 7;
     my $begin_with_step = 0;
 
+    # Scroll by 5 (so the first line is the 1st step, the 6th, the 11th, ...)
     if ( $current_step > $max_lines_for_output - 1 ) {
         #$begin_with_step = $current_step - 1;
         $begin_with_step = $current_step - $current_step % 5;
     }
 
+    # Last line should be the last step, so we will always se $max_lines_for_output lines
     if ( $begin_with_step + $max_lines_for_output > $step_count ) {
         $begin_with_step = $step_count - $max_lines_for_output;
     }
