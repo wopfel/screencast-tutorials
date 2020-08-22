@@ -51,3 +51,4 @@ for my $step_nr ( 0 .. $step_count-1 ) {
 
 }
 
+print "The end.\n";
