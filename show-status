@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use YAML::Tiny;
 
-my $step_list = YAML::Tiny->read( '/scripts/travel-status-de-iris_git.yml' )  or  die;
+my $step_list = YAML::Tiny->read( '/tmp/testenv_script.yml' )  or  die;
 my $step_count = scalar( @{ $step_list->[0]->{steps} } );
 
 my @step_status;

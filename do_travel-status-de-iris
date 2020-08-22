@@ -40,7 +40,7 @@ sub run_cmd($$$) {
 
 
 
-my $step_list = YAML::Tiny->read( '/scripts/travel-status-de-iris_git.yml' )  or  die;
+my $step_list = YAML::Tiny->read( '/tmp/testenv_script.yml' )  or  die;
 my $step_count = scalar( @{ $step_list->[0]->{steps} } );
 
 for my $step_nr ( 0 .. $step_count-1 ) {
