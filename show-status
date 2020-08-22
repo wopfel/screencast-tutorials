@@ -50,6 +50,7 @@ while ( 1 ) {
 
     # Doing output
 
+    system 'clear';
     printf "Status (%d/%d):\n", $current_step + 1, $step_count;
 
     for my $n ( $begin_with_step .. $begin_with_step + $max_lines_for_output - 1 ) {
