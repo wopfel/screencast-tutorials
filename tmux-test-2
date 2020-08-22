@@ -1,7 +1,15 @@
 #!/bin/bash
 
+echo Preparing docker container...
+echo
+
 apt update
 apt install -y tmux libyaml-tiny-perl
+
+echo
+echo Preparing finished. Proceeding now...
+echo
+sleep 1
 
 tmux new-session -d
 tmux split-window -v
