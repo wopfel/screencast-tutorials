@@ -11,8 +11,8 @@ sub run_cmd($$$) {
 
     my @args;
 
-    print "Step $nr: $cmd\n";
-    print "          $explanation";
+    printf "Step %3d: $cmd\n", $nr;
+    print  "          $explanation";
 
     open WIPFILE, ">", "/tmp/testenv_step-${nr}_wip";
     print WIPFILE "1";
