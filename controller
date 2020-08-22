@@ -28,7 +28,7 @@ sub run_cmd($$$) {
     print WIPFILE "1";
     close WIPFILE;
 
-    tmux_send( "$cmd ; touch /tmp/testenv_step-${nr}_done" );
+    tmux_send( "$cmd ; rc $nr" );
 
     sleep 1;
 
@@ -43,6 +43,12 @@ sub run_cmd($$$) {
 
 
 
+# Define bash function
+tmux_send "function rc() { touch /tmp/testenv_step-\${1}_done ; }";
+tmux_send "Enter";
+# Set prompt black text, green background
+tmux_send 'PS1="\[\033[42m\]\[\033[30m\]\u@\h:\w\\$\[\033[00m\] "';
+tmux_send "Enter";
 
 my $step_list = YAML::Tiny->read( '/tmp/testenv_script.yml' )  or  die;
 my $step_count = scalar( @{ $step_list->[0]->{steps} } );

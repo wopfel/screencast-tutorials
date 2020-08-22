@@ -1,7 +1,5 @@
 ---
 steps:
-- desc: 'Set bash prompt'
-  cmd: 'PS1="\[\033[42m\]\[\033[30m\]\u@\h:\w\\$\[\033[00m\] "'
 - desc: 'Update apt package cache'
   cmd: 'apt-get update'
 - desc: 'Install locales'
