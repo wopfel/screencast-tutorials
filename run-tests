@@ -14,8 +14,8 @@ fi
 echo Preparing docker container...
 echo
 
-apt update
-apt install -y tmux libyaml-tiny-perl
+apt-get update -qq
+apt-get install -y -qq tmux libyaml-tiny-perl > /dev/null
 
 echo
 echo Preparing finished. Proceeding now...
