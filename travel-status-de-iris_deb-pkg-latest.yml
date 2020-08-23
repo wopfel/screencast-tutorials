@@ -1,0 +1,21 @@
+---
+steps:
+- desc: 'Update apt package cache'
+  cmd: 'apt-get update'
+- desc: 'Install wget'
+  cmd: 'apt-get install -y wget'
+- desc: 'Non-interactive apt'
+  cmd: 'export DEBIAN_FRONTEND=noninteractive'
+- desc: 'Download package'
+  cmd: 'wget https://lib.finalrewind.org/deb/libtravel-status-de-iris-perl_latest_all.deb'
+- desc: 'Install package'
+  cmd: 'yes | dpkg -i libtravel-status-de-iris-perl_latest_all.deb'
+- desc: 'Fix'
+  cmd: 'apt --fix-broken install -y'
+- desc: 'Remove installation file'
+  cmd: 'rm libtravel-status-de-iris-perl_latest_all.deb'
+- desc: 'Show version of program'
+  cmd: 'db-iris --version'
+- desc: 'Call program'
+  cmd: 'db-iris -oq,D "Dortmund Hbf"'
+
