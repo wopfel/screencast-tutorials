@@ -17,5 +17,4 @@ steps:
 - desc: 'Show version of program'
   cmd: 'db-iris --version'
 - desc: 'Call program'
-  cmd: 'db-iris -oq,D "Dortmund Hbf"'
-
+  cmd: 'db-iris -oq,D "Dortmund Hbf" | perl -pe "sleep 1 if $. % 10 == 0"'
