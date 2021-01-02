@@ -1,7 +1,7 @@
 # screencast-tutorials
 Trying to record some tutorials about software installation and other things.
 
-## Sample
+## Sample: git bisect
 
 For example, how does it look when "git bisect" is doing its work?
 
@@ -16,4 +16,8 @@ For example, how does it look when "git bisect" is doing its work?
 
 Recording by asciinema is done using this command:
 `asciinema rec --overwrite -c "docker run -it --rm -v $PWD:/scripts ubuntu /bin/bash /scripts/run-tests git-bisect-sample.yml" recording.cast`
+
+## Sample: reveal.js installation
+
+`asciinema rec --overwrite -c "docker run -it --rm -v $PWD:/scripts ubuntu /bin/bash /scripts/run-tests reveal-js_full-setup.yml" recording.cast`
 
