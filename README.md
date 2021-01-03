@@ -5,6 +5,11 @@ Trying to record some tutorials about software installation and other things.
 2. `run-tests` is called inside a Ubuntu docker container, which runs the yml file
 3. It starts a tmux session to show the output of the commands (upper panel), the commands (lower left panel), and the step list (lower right panel).
 
+After each command from the yml file, the return code is written to a file in /tmp. The status script (shown in lower right panel) inspects the /tmp directory and prints the current status.
+
+- (done): Step has been completed.
+- (wip): Step is running (work in progress).
+
 ![ScreenShot](images/git-bisect-test.jpg)
 
 
