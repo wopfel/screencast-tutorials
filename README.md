@@ -29,6 +29,9 @@ For example, how does it look when "git bisect" is doing its work?
 Recording by asciinema is done using this command:
 `asciinema rec --overwrite -c "docker run -it --rm -v $PWD:/scripts ubuntu /bin/bash /scripts/run-tests git-bisect-sample.yml" recording.cast`
 
+External resources:
+- [git-bisect documentation](https://git-scm.com/docs/git-bisect)
+
 ## Sample: reveal.js installation
 
 `asciinema rec --overwrite -c "docker run -it --rm -v $PWD:/scripts ubuntu /bin/bash /scripts/run-tests reveal-js_full-setup.yml" recording.cast`
