@@ -5,6 +5,8 @@ Trying to record some tutorials about software installation and other things.
 2. `run-tests` is called inside a Ubuntu docker container, which runs the yml file
 3. It starts a tmux session to show the output of the commands (upper panel), the commands (lower left panel), and the step list (lower right panel).
 
+![ScreenShot](images/git-bisect-test.jpg)
+
 
 ## Sample: git bisect
 
