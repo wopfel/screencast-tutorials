@@ -7,7 +7,7 @@ steps:
 - desc: 'Non-interactive apt'
   cmd: 'export DEBIAN_FRONTEND=noninteractive'
 - desc: 'Download package'
-  cmd: 'wget https://lib.finalrewind.org/deb/libtravel-status-de-iris-perl_latest_all.deb'
+  cmd: 'wget -t2 https://lib.finalrewind.org/deb/libtravel-status-de-iris-perl_latest_all.deb'
 - desc: 'Install package'
   cmd: 'yes | dpkg -i libtravel-status-de-iris-perl_latest_all.deb'
 - desc: 'Fix'
