@@ -34,6 +34,7 @@ sub run_cmd($$$) {
 
     tmux_send( "Enter" );
 
+    # Wait until done file is written (which is created by the rc() bash function
     while ( ! -e "/tmp/testenv_step-${nr}_done" ) {
     }
 
