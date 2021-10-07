@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use YAML::Tiny;
+use Time::HiRes qw/ sleep /;
 
 
 sub tmux_send($) {
@@ -36,6 +37,8 @@ sub run_cmd($$$) {
 
     # Wait until done file is written (which is created by the rc() bash function
     while ( ! -e "/tmp/testenv_step-${nr}_done" ) {
+        # Don't stress the CPU
+        sleep 0.1;
     }
 
     # Read return code from done file
