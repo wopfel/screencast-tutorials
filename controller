@@ -41,7 +41,7 @@ sub run_cmd($$$) {
     # Read return code from done file
     open DONEFILE, "<", "/tmp/testenv_step-${nr}_done";
     chomp( my $rc_from_file = <DONEFILE> );
-    print "--- Result: $rc_from_file ---";
+    print " (return code: $rc_from_file)";
     close DONEFILE;
 
     print "\n";
