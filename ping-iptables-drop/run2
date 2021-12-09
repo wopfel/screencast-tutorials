@@ -40,21 +40,21 @@ done
 sleep 5
 
 tmux send-keys -t 0:1.0 'sudo iptables -I INPUT -p icmp -j DROP' Enter
-tmux send-keys -t 0:1.0 'sudo iptables -L -n -v --line-numbers' Enter
+tmux send-keys -t 0:1.0 'sudo iptables -L INPUT -n -v --line-numbers' Enter
 
 sleep 5
 
-tmux send-keys -t 0:1.0 'sudo iptables -L -n -v --line-numbers' Enter
+tmux send-keys -t 0:1.0 'sudo iptables -L INPUT -n -v --line-numbers' Enter
 tmux send-keys -t 0:1.0 'sudo iptables -F' Enter
 
 sleep 5
 
 tmux send-keys -t 0:1.0 'sudo iptables -I INPUT -p icmp -s 192.168.56.12 -j DROP' Enter
-tmux send-keys -t 0:1.0 'sudo iptables -L -n -v --line-numbers' Enter
+tmux send-keys -t 0:1.0 'sudo iptables -L INPUT -n -v --line-numbers' Enter
 
 sleep 5
 
-tmux send-keys -t 0:1.0 'sudo iptables -L -n -v --line-numbers' Enter
+tmux send-keys -t 0:1.0 'sudo iptables -L INPUT -n -v --line-numbers' Enter
 tmux send-keys -t 0:1.0 'sudo iptables -F' Enter
 
 sleep 10
