@@ -183,6 +183,7 @@ for my $step_nr ( 0 .. $step_count-1 ) {
 }
 
 # The end
+tmux_sendkeys "Enter";
 tmux_sendkeys "# The End. Bye.";
 tmux_sendkeys "Enter";
 
