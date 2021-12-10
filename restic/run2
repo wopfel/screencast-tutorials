@@ -63,6 +63,24 @@ tmux send-keys -t 0:1.0 'restic find file1' Enter
 
 tmux send-keys -t 0:1.0 'restic stats' Enter
 
+log "Get snapshot ID using jq (a snapshot having the file1 file)"
+tmux send-keys -t 0:1.0 'ID=$(restic find --json datadir/file1 | jq --raw-output ".[0].snapshot")' Enter
+tmux send-keys -t 0:1.0 'restic dump $ID datadir/file1' Enter
+sleep 4
+
+log "The file1 is not present"
+tmux send-keys -t 0:1.0 'ls -l datadir' Enter
+sleep 5
+
+log "Restore file from snapshot."
+tmux send-keys -t 0:1.0 'restic restore -i datadir/file1 -v -t . $ID' Enter
+tmux send-keys -t 0:1.0 'cat datadir/file1' Enter
+sleep 5
+
+log "The file1 is present now"
+tmux send-keys -t 0:1.0 'ls -l datadir' Enter
+sleep 10
+
 log "Tidy up."
 tmux send-keys -t 0:1.0 'rm -rf datadir/ restic-repo/' Enter
 sleep 2
