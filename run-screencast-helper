@@ -52,8 +52,11 @@ sub run_cmd($$$) {
     print WIPFILE "1";
     close WIPFILE;
 
-    tmux_sendkeys( "# " . $explanation )  if  $explanation;
-    tmux_sendkeys( "Enter" )  if  $explanation;
+    if ( $explanation ) {
+        tmux_sendkeys( "Enter" );  # adds an 'empty' line
+        tmux_sendkeys( "# " . $explanation );
+        tmux_sendkeys( "Enter" );
+    }
 
     tmux_sendkeys( "$cmd ; rc $nr" );
 
