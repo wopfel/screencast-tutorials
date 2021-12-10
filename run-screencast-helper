@@ -89,7 +89,9 @@ sub run_cmd($$$$$) {
 
     if ( $panels ) {
         foreach ( split / /, $panels ) {
-            tmux_sendkeys_panel $_, "$cmd ; rc $nr";
+            # Requesting returncode only for panel 0
+            tmux_sendkeys_panel $_, "$cmd ; rc $nr"  if  $_ == 0;
+            tmux_sendkeys_panel $_, "$cmd"           if  $_ > 0;
         }
     } else {
         tmux_sendkeys( "$cmd ; rc $nr" );
