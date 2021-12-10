@@ -1,4 +1,0 @@
-#!/bin/bash
-
-tmux new-session "bash ./run2"
-#tmux a

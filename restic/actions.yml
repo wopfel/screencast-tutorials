@@ -1,6 +1,6 @@
 ---
 env:
-- dummy: dummy
+  dummy: dummy
 
 steps:
 - desc: 'Set up restic repository'

@@ -17,6 +17,23 @@ mkdir "status" unless -d "status";
 system( "vagrant up --provision" );
 sleep 1;
 
+my $timebasedmode = 0;
+
+
+sub tmux_sendkeys_panel($$) {
+
+    my $panel = shift;
+    my $content = shift;
+
+    my $tmux_destination = "0:1.$panel";
+
+    my @args = ( "tmux", "send-keys", "-t", $tmux_destination,
+                 $content,
+               );
+    system( @args );
+
+}
+
 sub tmux_sendkeys($) {
 
     my $content = shift;
@@ -39,30 +56,56 @@ sub tmux_cmd(@) {
 
 }
 
-sub run_cmd($$$) {
+sub run_cmd($$$$$) {
 
     my $nr = shift;
     my $cmd = shift;
     my $explanation = shift;
+    my $waitbefore = shift;
+    my $panels = shift;
 
     printf "Step %3d: $cmd\n", $nr;
     print  "          $explanation"  if  $explanation;
+
+    sleep $waitbefore if $waitbefore;
 
     open WIPFILE, ">", "./status/testenv_step-${nr}_wip";
     print WIPFILE "1";
     close WIPFILE;
 
     if ( $explanation ) {
-        tmux_sendkeys( "Enter" );  # adds an 'empty' line
-        tmux_sendkeys( "# " . $explanation );
-        tmux_sendkeys( "Enter" );
+        if ( $panels ) {
+            foreach ( split / /, $panels ) {
+                tmux_sendkeys_panel $_, "Enter";
+                tmux_sendkeys_panel $_, "# " . $explanation;
+                tmux_sendkeys_panel $_, "Enter";
+            }
+        } else {
+            tmux_sendkeys( "Enter" );  # adds an 'empty' line
+            tmux_sendkeys( "# " . $explanation );
+            tmux_sendkeys( "Enter" );
+        }
     }
 
-    tmux_sendkeys( "$cmd ; rc $nr" );
+    if ( $panels ) {
+        foreach ( split / /, $panels ) {
+            tmux_sendkeys_panel $_, "$cmd ; rc $nr";
+        }
+    } else {
+        tmux_sendkeys( "$cmd ; rc $nr" );
+    }
 
     sleep 1;
 
-    tmux_sendkeys( "Enter" );
+    if ( $panels ) {
+        foreach ( split / /, $panels ) {
+            tmux_sendkeys_panel $_, "Enter";
+        }
+    } else {
+        tmux_sendkeys( "Enter" );
+    }
+
+    return if $timebasedmode;
 
     # Wait until done file is written (which is created by the rc() bash function
     while ( ! -e "./status/testenv_step-${nr}_done" ) {
@@ -86,14 +129,36 @@ sub run_cmd($$$) {
 my $actions = YAML::Tiny->read( "./actions.yml" )  or  die;
 my $step_count = scalar( @{ $actions->[0]->{steps} } );
 
+$timebasedmode = 1  if  defined $actions->[0]->{env}->{mode} and $actions->[0]->{env}->{mode} eq "timebased";
+
 tmux_cmd( "new-window" );
 #tmux_cmd( "split-window", "-v", "-l", "2", "watch -n 0.3 --no-title cat ./status" );
 tmux_cmd( "split-window", "-v", "-l", "2", "cd .. && perl ./run-screencast-status $dir" );
+
+if ( defined $actions->[0]->{env}->{'split-window'} and $actions->[0]->{env}->{'split-window'} == 4 ) {
+    tmux_cmd( "split-window", "-v", "-t", "0" );
+    sleep 1;
+    tmux_cmd( "split-window", "-h", "-t", "0" );
+    tmux_cmd( "split-window", "-h", "-t", "2" );
+}
+
 sleep 1;
 
-# SSH into Vagrant VM
-tmux_sendkeys "vagrant ssh";
-tmux_sendkeys "Enter";
+# SSH into Vagrant VM (or multiple VMs)
+if ( defined $actions->[0]->{env}->{'split-window'} and $actions->[0]->{env}->{'split-window'} == 4 ) {
+    tmux_sendkeys_panel 0, "vagrant ssh master";
+    tmux_sendkeys_panel 0, "Enter";
+    tmux_sendkeys_panel 1, "vagrant ssh node1";
+    tmux_sendkeys_panel 1, "Enter";
+    tmux_sendkeys_panel 2, "vagrant ssh node2";
+    tmux_sendkeys_panel 2, "Enter";
+    tmux_sendkeys_panel 3, "vagrant ssh node3";
+    tmux_sendkeys_panel 3, "Enter";
+} else {
+    tmux_sendkeys "vagrant ssh";
+    tmux_sendkeys "Enter";
+}
+
 sleep 4;
 
 # Define bash function
@@ -107,7 +172,7 @@ for my $step_nr ( 0 .. $step_count-1 ) {
 
     my %step = %{ $actions->[0]->{steps}->[$step_nr] };
 
-    run_cmd( $step_nr + 1, $step{'cmd'}, $step{'desc'} );
+    run_cmd( $step_nr + 1, $step{'cmd'}, $step{'desc'}, $step{'waitbefore'}, $step{'panels'} );
 
 }
 
@@ -117,9 +182,20 @@ tmux_sendkeys "Enter";
 
 sleep 5;
 
-# Exit SSH session
-tmux_sendkeys "exit";
-tmux_sendkeys "Enter";
+# Exit SSH session/sessions
+if ( defined $actions->[0]->{env}->{'split-window'} and $actions->[0]->{env}->{'split-window'} == 4 ) {
+    tmux_sendkeys_panel 0, "exit";
+    tmux_sendkeys_panel 0, "Enter";
+    tmux_sendkeys_panel 1, "exit";
+    tmux_sendkeys_panel 1, "Enter";
+    tmux_sendkeys_panel 2, "exit";
+    tmux_sendkeys_panel 2, "Enter";
+    tmux_sendkeys_panel 3, "exit";
+    tmux_sendkeys_panel 3, "Enter";
+} else {
+    tmux_sendkeys "exit";
+    tmux_sendkeys "Enter";
+}
 
 tmux_cmd( "kill-window" );
 
