@@ -1,0 +1,76 @@
+#!/bin/bash
+
+function log {
+    echo $* > status
+}
+
+log "Preparing tmux..."
+
+tmux new-window
+tmux split-window -v -l 2 "watch -n 0.3 --no-title cat status"
+sleep 1
+
+echo Hello
+
+#tmux select-window -t 0:0
+
+log "Connecting to VM..."
+
+tmux send-keys -t 0:1.0 'vagrant ssh' Enter
+
+sleep 3
+
+log "Setting up restic repository."
+tmux send-keys -t 0:1.0 'export RESTIC_PASSWORD=$(openssl rand -base64 18)' Enter
+tmux send-keys -t 0:1.0 'export RESTIC_REPOSITORY="$HOME/restic-repo"' Enter
+tmux send-keys -t 0:1.0 'restic init' Enter
+sleep 5
+
+log "Create some files."
+tmux send-keys -t 0:1.0 'mkdir datadir' Enter
+tmux send-keys -t 0:1.0 'date > datadir/file1' Enter
+tmux send-keys -t 0:1.0 'echo $RANDOM > datadir/file2' Enter
+sleep 2
+
+log "Run backup."
+tmux send-keys -t 0:1.0 'restic backup -v datadir/' Enter
+sleep 5
+
+log "List snapshot."
+tmux send-keys -t 0:1.0 'restic ls -l latest' Enter
+sleep 5
+
+log "Delete a file, create another file."
+tmux send-keys -t 0:1.0 'rm datadir/file1' Enter
+tmux send-keys -t 0:1.0 'date > datadir/file3' Enter
+tmux send-keys -t 0:1.0 'date > datadir/file4' Enter
+sleep 5
+
+log "Run backup."
+tmux send-keys -t 0:1.0 'restic backup -v datadir/' Enter
+sleep 2
+
+log "Run another backup (no change)."
+tmux send-keys -t 0:1.0 'restic backup -v datadir/' Enter
+sleep 4
+
+log "List snapshots and latest snapshot."
+tmux send-keys -t 0:1.0 'restic snapshots' Enter
+tmux send-keys -t 0:1.0 'restic ls -l latest' Enter
+
+log "Search a file."
+tmux send-keys -t 0:1.0 'restic find file1' Enter
+
+tmux send-keys -t 0:1.0 'restic stats' Enter
+
+log "Tidy up."
+tmux send-keys -t 0:1.0 'rm -rf datadir/ restic-repo/' Enter
+sleep 2
+
+log "The End."
+sleep 10
+tmux send-keys -t 0:1.0 'exit' Enter
+
+sleep 5
+
+tmux kill-window
