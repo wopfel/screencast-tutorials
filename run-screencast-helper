@@ -36,7 +36,6 @@ sub tmux_sendkeys($) {
 
     my $content = shift;
 
-    #my $tmux_destination = "0:0.0";
     my $tmux_destination = "0:1.0";
 
     my @args = ( "tmux", "send-keys", "-t", $tmux_destination,
@@ -138,7 +137,6 @@ my $actions = YAML::Tiny->read( "./actions.yml" )  or  die;
 my $step_count = scalar( @{ $actions->[0]->{steps} } );
 
 tmux_cmd( "new-window" );
-#tmux_cmd( "split-window", "-v", "-l", "2", "watch -n 0.3 --no-title cat ./status" );
 tmux_cmd( "split-window", "-v", "-l", "2", "cd .. && perl ./run-screencast-status $dir" );
 
 if ( defined $actions->[0]->{env}->{'split-window'} and $actions->[0]->{env}->{'split-window'} == 4 ) {
