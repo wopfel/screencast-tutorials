@@ -11,6 +11,5 @@ The pings are continued as soon as the firewall rules are reset.
 How to use:
 
 ```
-vagrant up
-bash run
+bash ./run-screencast ping-iptables-drop
 ```
