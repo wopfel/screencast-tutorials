@@ -17,8 +17,6 @@ mkdir "status" unless -d "status";
 system( "vagrant up --provision" );
 sleep 1;
 
-my $timebasedmode = 0;
-
 
 sub tmux_sendkeys_panel($$) {
 
@@ -87,12 +85,19 @@ sub run_cmd($$$$$) {
         }
     }
 
+    # For checking if a command was sent to panel id 0
+    my $panel0sent = 0;
+
     if ( $panels ) {
         foreach ( split / /, $panels ) {
             # Requesting returncode only for panel 0
             tmux_sendkeys_panel $_, "$cmd ; rc $nr"  if  $_ == 0;
             tmux_sendkeys_panel $_, "$cmd"           if  $_ > 0;
+            $panel0sent = 1 if $_ == 0;  # Remember if a cmd was sent to panel id 0
         }
+        # If no command was sent to panel 0, we have to send the rc call
+        # Otherwise, the script gets stuck since there's no signal about a completed command
+        tmux_sendkeys_panel 0, "rc $nr"  if  $panel0sent == 0;
     } else {
         tmux_sendkeys( "$cmd ; rc $nr" );
     }
@@ -103,11 +108,12 @@ sub run_cmd($$$$$) {
         foreach ( split / /, $panels ) {
             tmux_sendkeys_panel $_, "Enter";
         }
+        # If no command was sent to panel 0, we have to send the rc call
+        # Otherwise, the script gets stuck since there's no signal about a completed command
+        tmux_sendkeys_panel 0, "Enter"  if  $panel0sent == 0;
     } else {
         tmux_sendkeys( "Enter" );
     }
-
-    return if $timebasedmode;
 
     # Wait until done file is written (which is created by the rc() bash function
     while ( ! -e "./status/testenv_step-${nr}_done" ) {
@@ -130,8 +136,6 @@ sub run_cmd($$$$$) {
 
 my $actions = YAML::Tiny->read( "./actions.yml" )  or  die;
 my $step_count = scalar( @{ $actions->[0]->{steps} } );
-
-$timebasedmode = 1  if  defined $actions->[0]->{env}->{mode} and $actions->[0]->{env}->{mode} eq "timebased";
 
 tmux_cmd( "new-window" );
 #tmux_cmd( "split-window", "-v", "-l", "2", "watch -n 0.3 --no-title cat ./status" );
