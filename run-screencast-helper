@@ -173,10 +173,10 @@ tmux_sendkeys "Enter";
 
 for my $step_nr ( 0 .. $step_count-1 ) {
 
-    # Pause between each step (no pause for the first step)
-    sleep 2  if  $step_nr > 0;
-
     my %step = %{ $actions->[0]->{steps}->[$step_nr] };
+
+    # Pause between each step (no pause for the first step)
+    sleep 2  if  $step_nr > 0  and  !defined $step{'skip-delay'};
 
     run_cmd( $step_nr + 1, $step{'cmd'}, $step{'desc'}, $step{'waitbefore'}, $step{'panels'} );
 

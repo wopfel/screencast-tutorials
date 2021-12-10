@@ -9,41 +9,37 @@ steps:
   panels: 0 1 2 3
 
 - desc: 'Ping master'
-  cmd: 'ping -c 20 192.168.56.10'
+  cmd: 'ping -c 25 192.168.56.10'
   panels: 1 2 3
-
-- cmd: 'sleep 5'
-  panels: 0
 
 - desc: 'Add drop rule'
   cmd: 'sudo iptables -I INPUT -p icmp -j DROP'
   panels: 0
 - cmd: 'sudo iptables -L INPUT -n -v --line-numbers'
   panels: 0
-
-- cmd: 'sleep 5'
-  panels: 0
+  skip-delay: true
 
 - desc: 'Show dropped packet count, flush rules'
   cmd: 'sudo iptables -L INPUT -n -v --line-numbers'
   panels: 0
 - cmd: 'sudo iptables -F'
   panels: 0
-
-- cmd: 'sleep 5'
-  panels: 0
+  skip-delay: true
 
 - desc: 'Add drop rule for IP address .12'
   cmd: 'sudo iptables -I INPUT -p icmp -s 192.168.56.12 -j DROP'
   panels: 0
 - cmd: 'sudo iptables -L INPUT -n -v --line-numbers'
   panels: 0
-
-- cmd: 'sleep 5'
-  panels: 0
+  skip-delay: true
 
 - desc: 'Show dropped packet count, flush rules'
   cmd: 'sudo iptables -L INPUT -n -v --line-numbers'
   panels: 0
 - cmd: 'sudo iptables -F'
+  panels: 0
+  skip-delay: true
+
+- desc: Wait for ping
+  cmd: 'sleep 5'
   panels: 0
