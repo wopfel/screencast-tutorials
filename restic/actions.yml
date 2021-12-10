@@ -10,7 +10,7 @@ steps:
 
 - desc: "Create some files"
   cmd: 'mkdir datadir'
-- cmd: 'date > datadir/file1'
+- cmd: '( echo -n "This is file1, " ; date ) > datadir/file1'
 - cmd: 'echo $RANDOM > datadir/file2'
 
 - desc: "Run backup"
