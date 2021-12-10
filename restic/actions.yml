@@ -30,6 +30,18 @@ steps:
 - desc: "Run another backup (no change)."
   cmd: 'restic backup -v datadir/'
 
+- desc: "Overwrite file3"
+  cmd: 'echo $RANDOM > datadir/file3'
+
+- desc: "Run backup."
+  cmd: 'restic backup -v datadir/'
+
+- desc: "Delete file4"
+  cmd: 'rm datadir/file4'
+
+- desc: "Run backup."
+  cmd: 'restic backup -v datadir/'
+
 - desc: "List snapshots and latest snapshot."
   cmd: 'restic snapshots'
 - cmd: 'restic ls -l latest'
