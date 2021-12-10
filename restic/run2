@@ -74,6 +74,7 @@ sleep 5
 
 log "Restore file from snapshot."
 tmux send-keys -t 0:1.0 'restic restore -i datadir/file1 -v -t . $ID' Enter
+sleep 2
 tmux send-keys -t 0:1.0 'cat datadir/file1' Enter
 sleep 5
 
