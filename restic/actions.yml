@@ -19,7 +19,7 @@ steps:
 - desc: "List snapshot."
   cmd: 'restic ls -l latest'
 
-- desc: "Delete a file, create another file."
+- desc: "Delete a file, create files."
   cmd: 'rm datadir/file1'
 - cmd: 'date > datadir/file3'
 - cmd: 'date > datadir/file4'
