@@ -14,6 +14,12 @@ chdir $dir;
 
 mkdir "status" unless -d "status";
 
+# Greeter
+print "\n";
+print "Welcome to screencast-tutorials!\n";
+print "Let's prepare the VM(s) for '$dir'.\n";
+print "\n";
+
 system( "vagrant up --provision" );
 sleep 1;
 
