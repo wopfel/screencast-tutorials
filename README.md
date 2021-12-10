@@ -13,6 +13,19 @@ After each command from the yml file, the return code is written to a file in /t
 ![ScreenShot](images/git-bisect-test.jpg)
 
 
+## Mix of Docker and Vagrant stuff
+
+There's stuff which is running in a Docker environment,
+and there's stuff which is running in a Vagrant environment.
+
+For the docker samples, see below in this document.
+
+For Vagrant samples, please see the README.md files in the following directories:
+
+- ping-iptables-drop
+- restic
+
+
 ## Sample: git bisect
 
 For example, how does it look when "git bisect" is doing its work?
@@ -35,4 +48,3 @@ External resources:
 ## Sample: reveal.js installation
 
 `asciinema rec --overwrite -c "docker run -it --rm -v $PWD:/scripts ubuntu /bin/bash /scripts/run-tests reveal-js_full-setup.yml" recording.cast`
-

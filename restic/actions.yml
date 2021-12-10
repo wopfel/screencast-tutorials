@@ -1,0 +1,57 @@
+---
+env:
+- dummy: dummy
+
+steps:
+- desc: 'Set up restic repository'
+  cmd: 'export RESTIC_PASSWORD=$(openssl rand -base64 18)'
+- cmd: 'export RESTIC_REPOSITORY="$HOME/restic-repo"'
+- cmd: 'restic init'
+
+- desc: "Create some files"
+  cmd: 'mkdir datadir'
+- cmd: 'date > datadir/file1'
+- cmd: 'echo $RANDOM > datadir/file2'
+
+- desc: "Run backup"
+  cmd: 'restic backup -v datadir/'
+
+- desc: "List snapshot."
+  cmd: 'restic ls -l latest'
+
+- desc: "Delete a file, create another file."
+  cmd: 'rm datadir/file1'
+- cmd: 'date > datadir/file3'
+- cmd: 'date > datadir/file4'
+
+- desc: "Run backup."
+  cmd: 'restic backup -v datadir/'
+
+- desc: "Run another backup (no change)."
+  cmd: 'restic backup -v datadir/'
+
+- desc: "List snapshots and latest snapshot."
+  cmd: 'restic snapshots'
+- cmd: 'restic ls -l latest'
+
+- desc: "Search a file."
+  cmd: 'restic find file1'
+
+- cmd: 'restic stats'
+
+- desc: "Get snapshot ID using jq (a snapshot having the file1 file)"
+  cmd: 'ID=$(restic find --json datadir/file1 | jq --raw-output ".[0].snapshot")'
+- cmd: 'restic dump $ID datadir/file1'
+
+- desc: "The file1 is not present"
+  cmd: 'ls -l datadir'
+
+- desc: "Restore file from snapshot."
+  cmd: 'restic restore -i datadir/file1 -v -t . $ID'
+- cmd: 'cat datadir/file1'
+
+- desc: "The file1 is present now"
+  cmd: 'ls -l datadir'
+
+- desc: "Tidy up."
+  cmd: 'rm -rf datadir/ restic-repo/'

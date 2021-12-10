@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Used for the vagrant-powered screencasts (for example: restic/)
+
+if [[ ! -d $1 ]] ; then
+    echo "Error: No directory named '$1'"
+    exit 1
+fi
+
+tmux new-session "perl ./run-screencast-helper $1"

@@ -1,0 +1,122 @@
+#!/bin/perl
+
+
+use strict;
+use warnings;
+use YAML::Tiny;
+use Time::HiRes qw/ sleep /;
+
+
+
+
+my $dir = $ARGV[0];
+chdir $dir;
+
+mkdir "status" unless -d "status";
+
+system( "vagrant up --provision" );
+sleep 1;
+
+sub tmux_sendkeys($) {
+
+    my $content = shift;
+
+    #my $tmux_destination = "0:0.0";
+    my $tmux_destination = "0:1.0";
+
+    my @args = ( "tmux", "send-keys", "-t", $tmux_destination,
+                 $content,
+               );
+    system( @args );
+
+}
+
+sub tmux_cmd(@) {
+
+    my @args = ( "tmux", @_
+               );
+    system( @args );
+
+}
+
+sub run_cmd($$$) {
+
+    my $nr = shift;
+    my $cmd = shift;
+    my $explanation = shift;
+
+    printf "Step %3d: $cmd\n", $nr;
+    print  "          $explanation"  if  $explanation;
+
+    open WIPFILE, ">", "./status/testenv_step-${nr}_wip";
+    print WIPFILE "1";
+    close WIPFILE;
+
+    tmux_sendkeys( "# " . $explanation )  if  $explanation;
+    tmux_sendkeys( "Enter" )  if  $explanation;
+
+    tmux_sendkeys( "$cmd ; rc $nr" );
+
+    sleep 1;
+
+    tmux_sendkeys( "Enter" );
+
+    # Wait until done file is written (which is created by the rc() bash function
+    while ( ! -e "./status/testenv_step-${nr}_done" ) {
+        # Don't stress the CPU
+        sleep 0.1;
+    }
+
+    # Read return code from done file
+    open DONEFILE, "<", "./status/testenv_step-${nr}_done";
+    chomp( my $rc_from_file = <DONEFILE> );
+    print " (return code: $rc_from_file)";
+    close DONEFILE;
+
+    print "\n";
+
+}
+
+
+
+
+my $actions = YAML::Tiny->read( "./actions.yml" )  or  die;
+my $step_count = scalar( @{ $actions->[0]->{steps} } );
+
+tmux_cmd( "new-window" );
+#tmux_cmd( "split-window", "-v", "-l", "2", "watch -n 0.3 --no-title cat ./status" );
+tmux_cmd( "split-window", "-v", "-l", "2", "cd .. && perl ./run-screencast-status $dir" );
+sleep 1;
+
+# SSH into Vagrant VM
+tmux_sendkeys "vagrant ssh";
+tmux_sendkeys "Enter";
+sleep 4;
+
+# Define bash function
+tmux_sendkeys "function rc() { echo \$? > /vagrant/status/testenv_step-\${1}_done ; }";
+tmux_sendkeys "Enter";
+
+for my $step_nr ( 0 .. $step_count-1 ) {
+
+    sleep 2  if  $step_nr > 0;
+
+    my %step = %{ $actions->[0]->{steps}->[$step_nr] };
+
+    run_cmd( $step_nr + 1, $step{'cmd'}, $step{'desc'} );
+
+}
+
+# The end
+tmux_sendkeys "# The End. Bye.";
+tmux_sendkeys "Enter";
+
+sleep 5;
+
+# Exit SSH session
+tmux_sendkeys "exit";
+tmux_sendkeys "Enter";
+
+tmux_cmd( "kill-window" );
+
+unlink glob "./status/testenv_step-*_*";

@@ -1,0 +1,39 @@
+use strict;
+use warnings;
+use YAML::Tiny;
+
+my $dir = $ARGV[0];
+
+my $actions = YAML::Tiny->read( "$dir/actions.yml" )  or  die;
+my $step_count = scalar( @{ $actions->[0]->{steps} } );
+
+my @step_status;
+
+while ( 1 ) {
+
+    my $current_step = 0;
+
+    my $max_wip_step = 0;
+    my $max_done_step = 0;
+
+    for my $n ( 0 .. $step_count - 1 ) {
+        my $step_nr = $n + 1;
+
+        if ( -e "$dir/status/testenv_step-${step_nr}_done" ) {
+            $max_done_step = $step_nr;
+        }
+        if ( -e "$dir/status/testenv_step-${step_nr}_wip" ) {
+            $max_wip_step = $step_nr;
+        }
+
+    }
+
+    if ( $max_wip_step > $max_done_step ) {
+        print "Step $max_wip_step / $step_count running...\n";
+    } else {
+        print "Step $max_done_step / $step_count done.\n";
+    }
+
+    sleep 1;
+
+}
