@@ -1,0 +1,21 @@
+---
+env:
+  dummy: dummy
+  split-window: 4
+
+steps:
+- desc: 'Show ip addresses'
+  cmd: 'ip a | grep 192.168.56.'
+  panels: 0 1 2 3
+
+- desc: 'Subscribe to all topics for 10 seconds'
+  cmd: 'timeout 10 mosquitto_sub -h 192.168.56.10 -F "@Y-@m-@dT@H:@M:@S@z : %t : %p" -t "#"'
+  panels: 1
+
+- desc: 'Send message'
+  cmd: 'mosquitto_pub -h 192.168.56.10 -t topic -m "hello from $(hostname)"'
+  panels: 2 3
+
+- desc: 'Send message only from node3'
+  cmd: 'mosquitto_pub -h 192.168.56.10 -t topic -m "hello from $(hostname)"'
+  panels: 3
