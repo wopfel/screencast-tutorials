@@ -9,7 +9,7 @@ steps:
   panels: 0 1 2 3
 
 - desc: 'Ping master'
-  cmd: 'ping -c 25 192.168.56.10'
+  cmd: 'ping -c 35 192.168.56.10'
   panels: 1 2 3
 
 - desc: 'Add drop rule'
@@ -40,6 +40,16 @@ steps:
   panels: 0
   skip-delay: true
 
+- desc: Drop 50 % of all packets
+  cmd: 'sudo iptables -A INPUT -p icmp -m statistic --mode random --probability 0.5 -j DROP'
+
+- desc: 'Show dropped packet count, flush rules'
+  cmd: 'sudo iptables -L INPUT -n -v --line-numbers'
+  panels: 0
+- cmd: 'sudo iptables -F'
+  panels: 0
+  skip-delay: true
+
 - desc: Wait for ping
-  cmd: 'sleep 5'
+  cmd: 'sleep 8'
   panels: 0
