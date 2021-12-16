@@ -8,3 +8,6 @@ How to use:
 ```
 bash ./run-screencast restic
 ```
+
+Note: the VMs are not shut down after the script ends.
+You have to `vagrant halt` to halt the VMs.
