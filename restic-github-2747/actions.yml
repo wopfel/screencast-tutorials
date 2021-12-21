@@ -1,0 +1,27 @@
+---
+env:
+  dummy: dummy
+
+steps:
+- desc: 'Set up restic repository'
+  cmd: 'export RESTIC_PASSWORD=$(openssl rand -base64 18)'
+- cmd: 'export RESTIC_REPOSITORY="$HOME/restic-repo"'
+- cmd: 'restic init'
+
+- desc: "Create a file"
+  cmd: 'date > main.go'
+
+- desc: "Run backup script 1"
+  cmd: 'bash /vagrant/script1.sh'
+
+- desc: "Tidy up"
+  cmd: 'rm -rf restic-repo/'
+
+- desc: 'Set up another restic repository'
+  cmd: 'restic init'
+
+- desc: "Run backup script 2"
+  cmd: 'bash /vagrant/script2.sh'
+
+- desc: "Tidy up (finally)"
+  cmd: 'rm -rf main.go restic-repo/'
