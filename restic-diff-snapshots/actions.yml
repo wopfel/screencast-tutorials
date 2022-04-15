@@ -1,0 +1,66 @@
+---
+env:
+  dummy: dummy
+
+steps:
+- desc: 'Set up restic repository'
+  cmd: 'export RESTIC_PASSWORD=$(openssl rand -base64 18)'
+- cmd: 'export RESTIC_REPOSITORY="$HOME/restic-repo"'
+- cmd: 'restic init'
+
+- desc: "Create some files"
+  cmd: 'mkdir datadir'
+- cmd: '( echo -n "This is file1, " ; date ) > datadir/file1'
+- cmd: 'echo $RANDOM > datadir/file2'
+
+- desc: "Run backup"
+  cmd: 'restic backup -v datadir/'
+
+- desc: "List snapshot"
+  cmd: 'restic ls -l latest'
+
+- desc: "Delete a file, create files"
+  cmd: 'rm datadir/file1'
+- cmd: 'date > datadir/file3'
+- cmd: 'date > datadir/file4'
+
+- desc: "Run backup"
+  cmd: 'restic backup -v datadir/'
+
+- desc: "Show diff"
+  cmd: >-
+      restic diff $(restic snapshots --json latest | jq -r ".[0].id, .[0].parent") | awk '($1=="+")' | cut -f 2- -d ' ' | tree --fromfile .
+
+- desc: "Run another backup (no change)"
+  cmd: 'restic backup -v datadir/'
+
+- desc: "Show diff"
+  cmd: >-
+      restic diff $(restic snapshots --json latest | jq -r ".[0].id, .[0].parent") | awk '($1=="+")' | cut -f 2- -d ' ' | tree --fromfile .
+
+- desc: "Overwrite file3"
+  cmd: 'echo $RANDOM > datadir/file3'
+
+- desc: "Run backup"
+  cmd: 'restic backup -v datadir/'
+
+- desc: "Show diff"
+  cmd: >-
+      restic diff $(restic snapshots --json latest | jq -r ".[0].id, .[0].parent") | awk '($1=="+")' | cut -f 2- -d ' ' | tree --fromfile .
+
+- desc: "Delete file4"
+  cmd: 'rm datadir/file4'
+
+- desc: "Run backup"
+  cmd: 'restic backup -v datadir/'
+
+- desc: "Show diff"
+  cmd: >-
+      restic diff $(restic snapshots --json latest | jq -r ".[0].id, .[0].parent") | awk '($1=="+")' | cut -f 2- -d ' ' | tree --fromfile .
+
+- desc: "List snapshots and latest snapshot"
+  cmd: 'restic snapshots'
+- cmd: 'restic ls -l latest'
+
+- desc: "Tidy up"
+  cmd: 'rm -rf datadir/ restic-repo/'
