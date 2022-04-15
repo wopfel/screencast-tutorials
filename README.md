@@ -25,6 +25,9 @@ For Vagrant samples, please see the README.md files in the following directories
 - ping-iptables-drop
 - restic
 
+I'm running the Vagrant samples on my MacBook. For this, I've installed Vagrant
+(of course), VirtualBox, and tmux (`brew install tmux`).
+
 
 ## Sample: git bisect
 
